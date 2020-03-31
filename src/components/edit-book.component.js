@@ -61,7 +61,7 @@ export default class UpdateBook extends Component {
 
         console.log(book);
 
-        axios.post('http://localhost:5000/update' + this.props.match.params.id, book)
+        axios.post('http://localhost:5000/update/' + this.props.match.params.id, book)
             .then(res => console.log(res.data));
 
         window.location = '/';
