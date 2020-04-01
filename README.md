@@ -2,6 +2,18 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Modules
+
+### Backend Modules
+* express
+* cors
+* mongoose
+* dotenv
+
+### Frontend Modules
+* react-router-dom
+* axios
+
 ## Available Scripts
 
 In the project directory, you can run:
