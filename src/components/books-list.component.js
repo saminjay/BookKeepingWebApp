@@ -36,7 +36,7 @@ export default class BooksList extends Component {
 
     async deleteBook(id) {
         try {
-            const res = await axios.delete('http://localhost:5000/' + id)
+            await axios.delete('http://localhost:5000/' + id)
             this.setState({
                 books: this.state.books.filter(el => el._id !== id)
             });

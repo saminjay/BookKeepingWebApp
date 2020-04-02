@@ -45,7 +45,7 @@ export default class AddBook extends Component {
         };
 
         try{
-            const res = await axios.post('http://localhost:5000/add',book)
+            await axios.post('http://localhost:5000/add',book)
             window.location = '/';
         } catch(err) {
             console.log(`Error: ${err}`);

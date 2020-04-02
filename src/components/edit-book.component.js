@@ -60,7 +60,7 @@ export default class UpdateBook extends Component {
             genre: this.state.genre
         };
         try {
-            const res = await axios.post('http://localhost:5000/update/' + this.props.match.params.id, book);
+            await axios.post('http://localhost:5000/update/' + this.props.match.params.id, book);
             window.location = '/';
         } catch(err) {
             console.log(`Error: ${err}`);
