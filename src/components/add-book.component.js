@@ -35,7 +35,7 @@ export default class AddBook extends Component {
         });
     }
 
-    onSubmit(e) {
+    async onSubmit(e) {
         e.preventDefault();
 
         const book = {
@@ -44,12 +44,12 @@ export default class AddBook extends Component {
             genre: this.state.genre
         };
 
-        console.log(book);
-
-        axios.post('http://localhost:5000/add',book)
-            .then(res => console.log(res.data));
-
-        window.location = '/';
+        try{
+            const res = await axios.post('http://localhost:5000/add',book)
+            window.location = '/';
+        } catch(err) {
+            console.log(`Error: ${err}`);
+        }
     }
     render() {
         return (

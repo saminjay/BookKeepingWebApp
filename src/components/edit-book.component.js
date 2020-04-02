@@ -16,19 +16,20 @@ export default class UpdateBook extends Component {
             genre: ``
         }
     }
-
-    componentDidMount() {
-        axios.get('http://localhost:5000/' + this.props.match.params.id)
-            .then(res => {
-                this.setState({
-                    title: res.data.title,
-                    author: res.data.author,
-                    genre: res.data.genre
-                });
-            })
-            .catch(err => {
-                console.log(err);
+    async fetchData(url) {
+        try{
+            const res = await axios.get(url);
+            this.setState({
+                title: res.data.title,
+                author: res.data.author,
+                genre: res.data.genre
             });
+        }catch(err) {
+            console.log(`Error: ${err}`);
+        }
+    }
+    componentDidMount() {
+        this.fetchData('http://localhost:5000/' + this.props.match.params.id);
     }
 
 
@@ -50,7 +51,7 @@ export default class UpdateBook extends Component {
         });
     }
 
-    onSubmit(e) {
+    async onSubmit(e) {
         e.preventDefault();
 
         const book = {
@@ -58,13 +59,13 @@ export default class UpdateBook extends Component {
             author: this.state.author,
             genre: this.state.genre
         };
-
-        console.log(book);
-
-        axios.post('http://localhost:5000/update/' + this.props.match.params.id, book)
-            .then(res => console.log(res.data));
-
-        window.location = '/';
+        try {
+            const res = await axios.post('http://localhost:5000/update/' + this.props.match.params.id, book);
+            window.location = '/';
+        } catch(err) {
+            console.log(`Error: ${err}`);
+        }
+        
     }
     render() {
         return (

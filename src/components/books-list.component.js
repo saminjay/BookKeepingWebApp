@@ -21,23 +21,28 @@ export default class BooksList extends Component {
         this.state = {books:[]};
     }
 
-    componentDidMount() {
-        axios.get('http://localhost:5000/')
-            .then(res => {
-                this.setState({books: res.data});
-            })
-            .catch(err => {
-                console.log(err);
-            });
+    async fetchData(url) {
+        try {
+            const res = await axios.get(url);
+            this.setState({books: res.data});
+        } catch (err) {
+            console.log(`Error: ${err}`);
+        }
     }
 
-    deleteBook(id) {
-        axios.delete('http://localhost:5000/' + id)
-            .then(res => console.log(res.data));
+    componentDidMount() {
+        this.fetchData('http://localhost:5000/');
+    }
 
-        this.setState({
-            books: this.state.books.filter(el => el._id !== id)
-        });
+    async deleteBook(id) {
+        try {
+            const res = await axios.delete('http://localhost:5000/' + id)
+            this.setState({
+                books: this.state.books.filter(el => el._id !== id)
+            });
+        } catch(err) {
+            console.log(`Error: ${err}`);
+        }
     }
 
     booksList() {
