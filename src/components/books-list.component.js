@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 
@@ -11,64 +11,56 @@ const Book = props => (
             <Link to={"/edit/" + props.book._id}>edit</Link> | <a href="#" onClick={() => { props.deleteBook(props.book._id) }}>delete</a>
         </td>
     </tr>
-)
+);
 
-export default class BooksList extends Component {
-    constructor(props) {
-        super(props);
-        this.deleteBook = this.deleteBook.bind(this);
+export default function BookList() {
+    const url = 'http://localhost:5000/';
+    const [books, setBooks] = useState([]);
 
-        this.state = {books:[]};
-    }
-
-    async fetchData(url) {
+    const fetchData = async () => {
         try {
             const res = await axios.get(url);
-            this.setState({books: res.data});
+            setBooks(res.data);
         } catch (err) {
             console.log(`Error: ${err}`);
         }
     }
 
-    componentDidMount() {
-        this.fetchData('http://localhost:5000/');
-    }
+    useEffect(() => {
+        fetchData()
+    }, []);
 
-    async deleteBook(id) {
+    const deleteBook = async (id) => {
         try {
-            await axios.delete('http://localhost:5000/' + id)
-            this.setState({
-                books: this.state.books.filter(el => el._id !== id)
-            });
+            await axios.delete(url+ id)
+            setBooks(books.filter(el => el._id !== id));
         } catch(err) {
             console.log(`Error: ${err}`);
         }
     }
 
-    booksList() {
-        return this.state.books.map(curr => {
-            return <Book book={curr} deleteBook={this.deleteBook} key={curr._id}/>
-        })
+    const booksList = () => {
+        return books.map(curr => {
+            return <Book book={curr} deleteBook={deleteBook} key={curr._id}/>
+        });
     }
 
-    render() {
-        return (
-            <div>
-                <h3>List of Books</h3>
-                <table className="table">
-                    <thead className="thead-light">
-                        <tr>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Genre</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { this.booksList() }
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
+    return (
+        <div>
+            <h3>List of Books</h3>
+            <table className="table">
+                <thead className="thead-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    { booksList() }
+                </tbody>
+            </table>
+        </div>
+    );
 }

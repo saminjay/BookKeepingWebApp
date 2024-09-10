@@ -1,88 +1,99 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-export default class AddBook extends Component {
-    constructor(props) {
-        super(props);
+export default function () {
+    const url = 'http://localhost:5000/';
+    const { id } = useParams();
+    const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [genre, setGenre] = useState('');
 
-        this.onChangeTitle = this.onChangeTitle.bind(this);
-        this.onChangeAuthor = this.onChangeAuthor.bind(this);
-        this.onChangeGenre = this.onChangeGenre.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
+    const fetchData = async (url) => {
+        try{
+            const res = await axios.get(url);
 
-        this.state = {
-            title: ``,
-            author: ``,
-            genre: ``
+            setTitle(res.data.title);
+            setAuthor(res.data.author);
+            setGenre(res.data.genre);
+        } catch(err) {
+            console.log(`Error: ${err}`);
         }
     }
 
-    onChangeTitle(e) {
-        this.setState({
-            title: e.target.value
-        });
-    }
+    useEffect(() => {
+        if (id) {
+            fetchData(url + id);
+        }
+    }, [id]); 
 
-    onChangeAuthor(e) {
-        this.setState({
-            author: e.target.value
-        });
-    }
+    const onChangeTitle = (e) => setTitle(e.target.value);
 
-    onChangeGenre(e) {
-        this.setState({
-            genre: e.target.value
-        });
-    }
+    const onChangeAuthor = (e) => setAuthor(e.target.value);
 
-    async onSubmit(e) {
+    const onChangeGenre = (e) => setGenre(e.target.value);
+
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         const book = {
-            title: this.state.title,
-            author: this.state.author,
-            genre: this.state.genre
+            title,
+            author,
+            genre,
         };
 
-        try{
-            await axios.post('http://localhost:5000/add',book)
+        try {
+            if (id) {
+                await axios.post('http://localhost:5000/update/', id, book);
+            } else {
+                await axios.post('http://localhost:5000/add', book);
+            }
             window.location = '/';
         } catch(err) {
             console.log(`Error: ${err}`);
         }
     }
-    render() {
-        return (
-            <div>
-                <h3>Add a Book</h3>
-                <form onSubmit={this.onSubmit}>
-                    <div className="form-group">
-                        <label>Title: </label>
-                        <input type="text" required className="form-control" value={this.state.title} onChange={this.onChangeTitle}/>
-                    </div>
-                    <div className="form-group"> 
-                        <label>Author: </label>
-                        <input  type="text"
-                            required
-                            className="form-control"
-                            value={this.state.author}
-                            onChange={this.onChangeAuthor}
-                            />
-                    </div>
-                    <div className="form-group"> 
-                        <label>Genre: </label>
-                        <input  type="text"
-                            required
-                            className="form-control"
-                            value={this.state.genre}
-                            onChange={this.onChangeGenre}
-                            />
-                    </div>
-                    <div className="form-group">
-                        <input type="submit" value="Add the Book" className="btm btn-primary"/>
-                    </div>
-                </form>
-            </div>
-        );
-    }
+
+    return (
+        <div>
+            <h3>Add a Book</h3>
+            <form onSubmit={onSubmit}>
+                <div className="form-group">
+                    <label>Title: </label>
+                    <input
+                        type="text"
+                        required
+                        className="form-control"
+                        value={title}
+                        onChange={onChangeTitle}
+                    />
+                </div>
+                <div className="form-group"> 
+                    <label>Author: </label>
+                    <input  type="text"
+                        required
+                        className="form-control"
+                        value={author}
+                        onChange={onChangeAuthor}
+                    />
+                </div>
+                <div className="form-group"> 
+                    <label>Genre: </label>
+                    <input  type="text"
+                        required
+                        className="form-control"
+                        value={genre}
+                        onChange={onChangeGenre}
+                    />
+                </div>
+                <div className="form-group">
+                    <input
+                        type="submit"
+                        value={id ? "Update Book" : "Add Book"}
+                        className="btm btn-primary"
+                    />
+                </div>
+            </form>
+        </div>
+    );
 }
